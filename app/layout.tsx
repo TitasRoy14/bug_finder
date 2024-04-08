@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.variable}>
-        <Theme accentColor='purple' radius='full'>
+        <Theme accentColor='purple'>
           <NavBar />
           <main className='p-5'>{children}</main>
           <ThemePanel />
