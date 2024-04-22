@@ -11,6 +11,7 @@ import { createIssueSchema } from '@/app/validationSchema';
 import { z } from 'zod';
 import ErrorMessage from '@/app/components/ErrorMessage';
 import Spinner from '@/app/components/Spinner';
+import delay from 'delay';
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
 });
@@ -18,7 +19,7 @@ const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
 // here we can generate the interface based on the defined schema
 type IssueForm = z.infer<typeof createIssueSchema>;
 
-const NewIssuePage = () => {
+const NewIssuePage = async () => {
   const router = useRouter();
   const {
     register,
@@ -41,6 +42,8 @@ const NewIssuePage = () => {
       setError('An unexpected error occured');
     }
   });
+
+  await delay(5000);
   return (
     <div className='max-w-xl'>
       {error && (
