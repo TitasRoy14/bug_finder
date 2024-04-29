@@ -12,9 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
-  ssr: false,
-});
+import SimpleMDE from 'react-simplemde-editor';
 
 // here we can generate the interface based on the defined schema
 type IssueFormData = z.infer<typeof issueSchema>;
@@ -32,7 +30,8 @@ const IssueForm = async ({ issue }: { issue?: Issue }) => {
   const [error, setError] = useState('');
   const [isSubmitting, setSubmitting] = useState(false);
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async (data, event) => {
+    event!.preventDefault();
     try {
       setSubmitting(true);
       if (issue) await axios.patch('/api/issues/' + issue.id, data);
