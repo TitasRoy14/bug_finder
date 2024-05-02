@@ -7,6 +7,8 @@ import { Issue } from '@prisma/client';
 import { Button, Callout, TextField } from '@radix-ui/themes';
 import axios from 'axios';
 import 'easymde/dist/easymde.min.css';
+import { RxUpdate } from 'react-icons/rx';
+import { FaPlusCircle } from 'react-icons/fa';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -70,6 +72,7 @@ const IssueForm = async ({ issue }: { issue?: Issue }) => {
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
         <Button disabled={isSubmitting}>
+          {issue ? <RxUpdate /> : <FaPlusCircle />}
           {issue ? 'Update Issue' : 'Submit New Issue'}{' '}
           {isSubmitting && <Spinner />}
         </Button>
