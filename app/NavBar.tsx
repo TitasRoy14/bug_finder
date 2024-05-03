@@ -1,9 +1,8 @@
 'use client';
+import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
 import { GiAlienBug } from 'react-icons/gi';
-import classNames from 'classnames';
 
 const NavBar = () => {
   const currentPath = usePathname();
@@ -11,7 +10,7 @@ const NavBar = () => {
 
   const links = [
     { labels: 'Dashboard', href: '/' },
-    { labels: 'Issues', href: '/issues' },
+    { labels: 'Issues', href: '/issues/list' },
   ];
   return (
     <nav className='flex space-x-6 border-b mb-5 px-5 h-14 items-center '>
