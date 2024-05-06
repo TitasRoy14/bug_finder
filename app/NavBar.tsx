@@ -16,7 +16,7 @@ import { GiAlienBug } from 'react-icons/gi';
 const NavBar = () => {
   const currentPath = usePathname();
   const { status, data: session } = useSession();
-  console.log(status);
+  console.log(session);
 
   const links = [
     { labels: 'Dashboard', href: '/' },
@@ -60,6 +60,7 @@ const NavBar = () => {
                     radius='full'
                     className='cursor-pointer'
                     size='2'
+                    referrerPolicy='no-referrer'
                   />
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
