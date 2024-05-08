@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GiAlienBug } from 'react-icons/gi';
+import { Skeleton } from '@/app/components';
 
 const NavBar = () => {
   return (
@@ -63,7 +64,7 @@ const AuthStatus = () => {
   const { status, data: session } = useSession();
   console.log(session);
 
-  if (status === 'loading') return null;
+  if (status === 'loading') return <Skeleton width='3rem' />;
 
   if (status === 'unauthenticated')
     return (
