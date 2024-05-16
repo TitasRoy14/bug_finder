@@ -1,5 +1,5 @@
 import authOptions from '@/app/auth/authOptions';
-import { issueSchema } from '@/app/validationSchema';
+import { patchIssueSchema } from '@/app/validationSchema';
 import prisma from '@/prisma/client';
 import { Issue } from '@prisma/client';
 import { getServerSession } from 'next-auth';
@@ -10,14 +10,28 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   //check to see if user logged in
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
+  // const session = await getServerSession(authOptions);
+  // if (!session) return NextResponse.json({}, { status: 401 });
 
   const body: Issue = await request.json();
-  const validation = issueSchema.safeParse(body);
+  const validation = patchIssueSchema.safeParse(body);
 
   if (!validation.success)
     return NextResponse.json(validation.error.format(), { status: 400 });
+
+  // here we checking the assigned to user id validation and corresponding steps
+
+  const { title, description, assignedToUserId } = body;
+  if (assignedToUserId) {
+    const user = await prisma.user.findUnique({
+      where: { id: assignedToUserId },
+    });
+
+    if (!user)
+      return NextResponse.json({ error: 'Invalid user' }, { status: 400 });
+  }
+
+  // Here we finding the existence of the issue
 
   const issue = await prisma.issue.findUnique({
     where: { id: parseInt(params.id) },
@@ -29,11 +43,14 @@ export async function PATCH(
       { status: 404 }
     );
 
+  // updation part
+
   const updatedIssue = await prisma.issue.update({
     where: { id: parseInt(params.id) },
     data: {
-      title: body.title,
-      description: body.description,
+      title,
+      description,
+      assignedToUserId,
     },
   });
 
