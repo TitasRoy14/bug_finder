@@ -10,8 +10,8 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   //check to see if user logged in
-  // const session = await getServerSession(authOptions);
-  // if (!session) return NextResponse.json({}, { status: 401 });
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({}, { status: 401 });
 
   const body: Issue = await request.json();
   const validation = patchIssueSchema.safeParse(body);
@@ -22,13 +22,13 @@ export async function PATCH(
   // here we checking the assigned to user id validation and corresponding steps
 
   const { title, description, assignedToUserId } = body;
-  if (assignedToUserId) {
+  if (assignedToUserId !== null) {
     const user = await prisma.user.findUnique({
       where: { id: assignedToUserId },
     });
 
     if (!user)
-      return NextResponse.json({ error: 'Invalid user' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid User' }, { status: 400 });
   }
 
   // Here we finding the existence of the issue
