@@ -8,27 +8,37 @@ import toast, { Toaster } from 'react-hot-toast';
 import Skeleton from '@/app/components/Skeleton';
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
-  const getUsers = async () => {
-    return await axios.get('/api/users').then((res) => res.data);
-  };
-  const {
-    data: users,
-    error,
-    isLoading,
-  } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: getUsers,
-    staleTime: 60 * 1000, //60s
-    retry: 3,
-  });
+  const { data: users, error, isLoading } = useUsers();
 
   if (isLoading) return <Skeleton height='2rem' />;
 
   if (error) return null;
 
-  const assignToUser = (userId: string) => {
-    return axios.patch<Issue>('/api/issues/' + issue.id, {
+  const assignIssue = async (userId: string) => {
+    axios.patch<Issue>('/api/issues/' + issue.id, {
       assignedToUserId: userId === 'none' ? null : userId,
+    });
+  };
+
+  const showingTheToast = async (userId: string) => {
+    let userName: string;
+
+    if (userId !== 'none') {
+      const { name } = await axios
+        .post<User>('/api/users', { userId: userId || null })
+        .then((res) => res.data);
+      userName = name!;
+    }
+
+    toast.promise(assignIssue(userId), {
+      loading: 'Loading...',
+      success: (data) => {
+        return userId === 'none'
+          ? `Issue reverted to ${'Unassigned'}`
+          : `Issue assigned to ${userName}`;
+      },
+
+      error: (err: Error) => `This just happened: ${console.log(err)}`,
     });
   };
 
@@ -36,27 +46,7 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     <>
       <Select.Root
         defaultValue={issue.assignedToUserId || 'none'}
-        onValueChange={async (userId) => {
-          let userName: string;
-
-          if (userId !== 'none') {
-            const { name } = await axios
-              .post<User>('/api/users', { userId: userId || null })
-              .then((res) => res.data);
-            userName = name!;
-          }
-
-          toast.promise(assignToUser(userId), {
-            loading: 'Loading...',
-            success: (data) => {
-              return userId === 'none'
-                ? `Issue reverted to ${'Unassigned'}`
-                : `Issue assigned to ${userName}`;
-            },
-
-            error: (err: Error) => `This just happened: ${console.log(err)}`,
-          });
-        }}
+        onValueChange={(userId) => showingTheToast(userId)}
       >
         <Select.Trigger placeholder='Assign' />
         <Select.Content>
@@ -76,13 +66,11 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
   );
 };
 
-// async function fetchUser(userId: string) {
-//   const user = await prisma.user.findUnique({
-//     where: {
-//       id: userId,
-//     },
-//   });
-//   return user;
-// }
-
+const useUsers = () =>
+  useQuery<User[]>({
+    queryKey: ['users'],
+    queryFn: () => axios.get('/api/users').then((res) => res.data),
+    staleTime: 60 * 1000, //60s
+    retry: 3,
+  });
 export default AssigneeSelect;
