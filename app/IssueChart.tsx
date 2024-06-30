@@ -1,14 +1,19 @@
 'use client';
+import { Status } from '@prisma/client';
 import { Card } from '@radix-ui/themes';
 import { ResponsiveContainer, BarChart, XAxis, YAxis, Bar } from 'recharts';
 
 interface Props {
+  status: status;
+}
+
+type status = {
   open: number;
   inProgress: number;
   closed: number;
-}
+};
 
-const IssueChart = ({ open, inProgress, closed }: Props) => {
+const IssueChart = ({ status: { closed, open, inProgress } }: Props) => {
   const data: {
     label: string;
     value: number;
