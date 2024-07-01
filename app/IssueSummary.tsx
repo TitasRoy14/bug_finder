@@ -3,10 +3,10 @@ import { Card, Flex, Text } from '@radix-ui/themes';
 import Link from 'next/link';
 
 interface Props {
-  status: status;
+  status: statusCount;
 }
 
-type status = {
+type statusCount = {
   open: number;
   inProgress: number;
   closed: number;

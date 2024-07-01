@@ -4,10 +4,10 @@ import { Card } from '@radix-ui/themes';
 import { ResponsiveContainer, BarChart, XAxis, YAxis, Bar } from 'recharts';
 
 interface Props {
-  status: status;
+  status: statusCount;
 }
 
-type status = {
+type statusCount = {
   open: number;
   inProgress: number;
   closed: number;
