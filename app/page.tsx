@@ -27,6 +27,8 @@ export default async function Home() {
   );
 }
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Home',
   description: 'This is a Home Page',
